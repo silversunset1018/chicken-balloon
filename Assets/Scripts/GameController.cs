@@ -1,8 +1,5 @@
 using UnityEngine;
 using System.Collections;
-using Soomla;
-using Soomla.Example;
-using Soomla.Store;
 using System;
 using Fresvii.AppSteroid;
 
@@ -38,8 +35,6 @@ public class GameController : MonoBehaviour {
 	private static GameSettings settings;
 
 	//課金用.
-	private static bool isIAPInit;
-	private static ExampleEventHandler handler;
 	private static int useBalloon;	//消費する風船.
 	private const int MAX_USE_BALLOON = 9;	//消費する最大の風船数.
 
@@ -123,9 +118,8 @@ public class GameController : MonoBehaviour {
 				gameoverGUI.collider.enabled = true;
 			} else {
 				//phsse 2 : コンティニュー準備.
-				ExampleLocalStoreInfo.UpdateBalances();
 				//風船足りる？.
-				if (ExampleLocalStoreInfo.CurrencyBalance >= useBalloon) {
+				if (shopBalloon >= useBalloon) {
 					//足りる時はコンティニュー表示.
 					gameoverGUI.SetActive(false);
 					continueGUI.SetActive(true);
@@ -146,12 +140,10 @@ public class GameController : MonoBehaviour {
 		continueGUI.SetActive(false);
 		
 		//風船減算処理.
-		string itemName = "continue_item" + useBalloon;
+		shopBalloon -= useBalloon;
 		if (useBalloon < MAX_USE_BALLOON) {
 			useBalloon += 2;
 		}
-
-		StoreInventory.BuyItem(itemName);
 
 		//コンティニュー処理.
 		TouchStageClear(true);

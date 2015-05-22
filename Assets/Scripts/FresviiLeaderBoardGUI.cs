@@ -17,7 +17,7 @@ public class FresviiLeaderBoardGUI : MonoBehaviour
 	//サインアップ済みか確認 / Already signup?
 	//------------------------------
     public bool GetAlreadySignup() {
-		List<User> users = FAS.LoadSignedUpUsers();
+		List<User> users = FASUser.LoadSignedUpUsers();
 		return (users.Count > 0);
     }
 
@@ -26,14 +26,14 @@ public class FresviiLeaderBoardGUI : MonoBehaviour
 		Debug.Log (point);
 		bool result = false;
         //  Get signed up users list
-        List<User> users = FAS.LoadSignedUpUsers();
+        List<User> users = FASUser.LoadSignedUpUsers();
 
         //  If signed up user already exists
         if (users.Count > 0)
         {
             User user = users[users.Count - 1]; //  this case, we use latest signed up user account.
 			Debug.Log(user);
-            FAS.LogIn(user.Id, user.Token, delegate(Error error)
+            FASUser.LogIn(user.Id, user.Token, delegate(Error error)
             {
                 if (error == null)
                 {
@@ -42,12 +42,12 @@ public class FresviiLeaderBoardGUI : MonoBehaviour
 						result = true;
 						
 						//端末の回転を制御（縦持ちを許可する）/controll screen orientation in mobile
-						if (!GameController.isIOS8) {
+						//if (!GameController.isIOS8) {
 							Screen.autorotateToPortrait = true;
 							Screen.autorotateToPortraitUpsideDown = true;
-						}
+						//}
 						//GUI表示/show GUI
-						FASGui.ShowGUI(FASGui.Mode.Leaderboards | FASGui.Mode.MyProfile, returnSceneName, FASGui.Mode.Leaderboards);
+						FASGui.ShowGUI(FASGui.Mode.Leaderboards | FASGui.Mode.MyProfile | FASGui.Mode.GroupMessage, returnSceneName, FASGui.Mode.Leaderboards);
 					});
 				}
                 else
@@ -59,12 +59,12 @@ public class FresviiLeaderBoardGUI : MonoBehaviour
         //  If signed up user does not exist
         else
         {
-			FAS.SignUp(userName, delegate(User user, Error error)
+			FASUser.SignUp(userName, delegate(User user, Error error)
 			{
-				FAS.SaveSignUpUser(user);
+				FASUser.SaveSignUpUser(user);
                 if (error == null)
                 {
-                    FAS.LogIn(user.Id, user.Token, delegate(Error error2)
+                    FASUser.LogIn(user.Id, user.Token, delegate(Error error2)
                     {
                         if (error2 == null)
                         {
@@ -72,12 +72,12 @@ public class FresviiLeaderBoardGUI : MonoBehaviour
 							{
 								result = true;
 								//端末の回転を制御（縦持ちを許可する）/controll screen orientation in mobile
-								if (!GameController.isIOS8) {
+								//if (!GameController.isIOS8) {
 									Screen.autorotateToPortrait = true;
 									Screen.autorotateToPortraitUpsideDown = true;
-								}
+								//}
 								//GUI表示/show GUI
-								FASGui.ShowGUI(FASGui.Mode.Leaderboards | FASGui.Mode.MyProfile, returnSceneName, FASGui.Mode.Leaderboards);
+								FASGui.ShowGUI(FASGui.Mode.Leaderboards | FASGui.Mode.MyProfile | FASGui.Mode.GroupMessage, returnSceneName, FASGui.Mode.Leaderboards);
 							});
 						}
                         else

@@ -17,7 +17,7 @@ public class FresviiForumGUI : MonoBehaviour
 	//サインアップ済みか確認 / Already signup?
 	//------------------------------
 	public bool GetAlreadySignup() {
-		List<User> users = FAS.LoadSignedUpUsers();
+		List<User> users = FASUser.LoadSignedUpUsers();
 		Debug.LogWarning(users.Count);
 		return (users.Count > 0);
 	}
@@ -30,7 +30,7 @@ public class FresviiForumGUI : MonoBehaviour
 	public void ShowFGCGui(string userName)
     {
         //  Get signed up users list
-        List<User> users = FAS.LoadSignedUpUsers();
+        List<User> users = FASUser.LoadSignedUpUsers();
 
         //  If signed up user already exists
         if (users.Count > 0)
@@ -38,7 +38,7 @@ public class FresviiForumGUI : MonoBehaviour
             User user = users[users.Count - 1]; //  this case, we use latest signed up user account.
 
 			Debug.Log("login");
-            FAS.LogIn(user.Id, user.Token, delegate(Error error){
+            FASUser.LogIn(user.Id, user.Token, delegate(Error error){
 				OnLogin(error);    
             });
 
@@ -51,22 +51,22 @@ public class FresviiForumGUI : MonoBehaviour
 				userName = defaultUserName;
 			}
 			Debug.Log("SignUp "+userName);
-			FAS.SignUp(userName, delegate(User user, Error error)
+			FASUser.SignUp(userName, delegate(User user, Error error)
             {
                 if (error == null)
                 {
-                    FAS.LogIn(user.Id, user.Token, delegate(Error error2)
+                    FASUser.LogIn(user.Id, user.Token, delegate(Error error2)
                     {
                         if (error2 == null)
                         {
            
 							//端末の回転を制御（縦持ちを許可する）/controll screen orientation in mobile
-							if (!GameController.isIOS8) {
+							//if (!GameController.isIOS8) {
 								Screen.autorotateToPortrait = true;
 								Screen.autorotateToPortraitUpsideDown = true;
-							}
+							//}
 							//GUI表示/show GUI
-							FASGui.ShowGUI(FASGui.Mode.Forum | FASGui.Mode.Leaderboards | FASGui.Mode.MyProfile, FASGui.Mode.Forum);
+							FASGui.ShowGUI(FASGui.Mode.Forum | FASGui.Mode.Leaderboards | FASGui.Mode.MyProfile | FASGui.Mode.GroupMessage, FASGui.Mode.Forum);
                         }
                         else
                         {
@@ -89,12 +89,12 @@ public class FresviiForumGUI : MonoBehaviour
 		if (error == null)
 		{
 			//端末の回転を制御（縦持ちを許可する）/controll screen orientation in mobile
-			if (!GameController.isIOS8) {
+			//if (!GameController.isIOS8) {
 				Screen.autorotateToPortrait = true;
 				Screen.autorotateToPortraitUpsideDown = true;
-			}
+			//}
 			//GUI表示/show GUI
-			FASGui.ShowGUI(FASGui.Mode.Forum | FASGui.Mode.Leaderboards | FASGui.Mode.MyProfile, FASGui.Mode.Forum);
+			FASGui.ShowGUI(FASGui.Mode.Forum | FASGui.Mode.Leaderboards | FASGui.Mode.MyProfile | FASGui.Mode.GroupMessage, FASGui.Mode.Forum);
 		}
 		else
 		{

@@ -1,4 +1,7 @@
 #import "ImagePickerPlugin.h"
+#import "FASImagePickerController.h"
+#import <MediaPlayer/MediaPlayer.h>
+#import <MobileCoreServices/MobileCoreServices.h>
 
 extern UIViewController *UnityGetGLViewController();
 
@@ -7,10 +10,11 @@ extern UIView *UnityGetGLView();
 extern "C" void UnitySendMessage(const char* obj, const char* method, const char* msg);
 
 typedef struct {
-	unsigned char r, g, b, a;
+    unsigned char r, g, b, a;
 } Color32;
 
 static const char *strSourceType_PhotoLibrary = "PhotoLibrary";
+static const char *strSourceType_MovieLibrary = "MovieLibrary";
 static const char *strSourceType_Camera = "Camera";
 static const char *strSourceType_SavedPhotosAlbum = "SavedPhotosAlbum";
 
@@ -22,13 +26,16 @@ static const char *strCallbackResultMessage_SourceTypeUnavailable = "SourceTypeU
 static UIImagePickerControllerSourceType sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
 
 static struct {
-	char strGameObjectName[256];
-	char strMethodName[256];
+    char strGameObjectName[256];
+    char strMethodName[256];
 } callbackLoadedInfo = {0};
 
 static void ImagePicker_callback(const char *msg);
 
+static int pickerType = 0; // 0 = photo, 1 = movie, 2 = camera
+
 @interface ImagePickerPlugin (Private)
+
 + (ImagePickerPlugin *) instance;
 
 - (bool) showImagePicker:(const char *)sourceTypeText;
@@ -42,151 +49,212 @@ static void ImagePicker_callback(const char *msg);
 
 @implementation ImagePickerPlugin
 
-static UIImagePickerController* imagePicker = nil;
+static MPMoviePlayerViewController *moviePlayer = nil;
+static FASImagePickerController* imagePicker = nil;
 static UIImage *loadedImage = nil;
+static char latestVideoUrl[1024];
 
 static ImagePickerPlugin *pInstance = nil;
 
 + (ImagePickerPlugin *) instance {
-	if (pInstance == nil) {
-		pInstance = [[ImagePickerPlugin alloc] init];
+    if (pInstance == nil) {
+        pInstance = [[ImagePickerPlugin alloc] init];
     }
-	return pInstance;
+    return pInstance;
+}
+
+- (ImagePickerPlugin *) init
+{
+    [super init];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleThumbnailFinished:)
+                                                 name:MPMoviePlayerThumbnailImageRequestDidFinishNotification
+                                               object:nil];
+    
+    return self;
 }
 
 - (void) releaseImage {
-	if (loadedImage) {
-		[loadedImage release];
-		loadedImage = nil;
-	}
+    if (loadedImage) {
+        [loadedImage release];
+        loadedImage = nil;
+    }
 }
 - (void) releasePicker {
-	if (imagePicker) {
-		imagePicker.delegate = nil;
-		[imagePicker release];
-		imagePicker = nil;
-	}
+    if (imagePicker) {
+        imagePicker.delegate = nil;
+        [imagePicker release];
+        imagePicker = nil;
+    }
     
 }
 
 - (void)dealloc {
     
-	[self releaseImage];
-	[self releasePicker];
+    [self releaseImage];
+    [self releasePicker];
     
-	[super dealloc];
+    [super dealloc];
     
-	pInstance = nil;
+    pInstance = nil;
 }
 
 - (bool) getLoadedTexrure:(Color32 *)pixelBuffer width:(int)width height:(int)height {
     
-	assert(pixelBuffer);
-	if (pixelBuffer) {
-		if (loadedImage) {
-
-			// Resize
-			UIGraphicsBeginImageContext(CGSizeMake(width, height));
-			CGRect drawRect = CGRectMake(0, 0, width, height);
-			[loadedImage drawInRect:drawRect];
-			UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
-			int newImageHeight = (int)newImage.size.height;
-			UIGraphicsEndImageContext();
+    assert(pixelBuffer);
+    if (pixelBuffer) {
+        if (loadedImage) {
             
-			// Pixel Data
-			CGDataProviderRef dataProvider = CGImageGetDataProvider(newImage.CGImage);
-			NSData *data = (NSData *) CFBridgingRelease(CGDataProviderCopyData(dataProvider));
-			if (data) {
-				assert([data length] >= (width*height*4));
-				int newImagePitch = [data length] / newImageHeight / 4;
-				const Color32 *pSrcBase = (const Color32 *)[data bytes];
-				for (int y=0; y<height; ++y) {
-					const Color32 *pSrc = &pSrcBase[newImagePitch*y];
-					Color32 *pDst = &pixelBuffer[width*((height-1)-y)];
-					for (int x=0; x<width; ++x) {
-						pDst->r = pSrc->b;
-						pDst->g = pSrc->g;
-						pDst->b = pSrc->r;
-						pDst->a = pSrc->a;
-						++pSrc;
-						++pDst;
-					}
-				}
-			}
+            // Resize
+            UIGraphicsBeginImageContext(CGSizeMake(width, height));
+            CGRect drawRect = CGRectMake(0, 0, width, height);
+            [loadedImage drawInRect:drawRect];
+            UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
+            int newImageHeight = (int)newImage.size.height;
+            UIGraphicsEndImageContext();
             
-			return true;
-		}
-	}
-	return false;
+            // Pixel Data
+            CGDataProviderRef dataProvider = CGImageGetDataProvider(newImage.CGImage);
+            NSData *data = (NSData *) CFBridgingRelease(CGDataProviderCopyData(dataProvider));
+            if (data) {
+                assert([data length] >= (width*height*4));
+                int newImagePitch = [data length] / newImageHeight / 4;
+                const Color32 *pSrcBase = (const Color32 *)[data bytes];
+                for (int y=0; y<height; ++y) {
+                    const Color32 *pSrc = &pSrcBase[newImagePitch*y];
+                    Color32 *pDst = &pixelBuffer[width*((height-1)-y)];
+                    for (int x=0; x<width; ++x) {
+                        pDst->r = pSrc->b;
+                        pDst->g = pSrc->g;
+                        pDst->b = pSrc->r;
+                        pDst->a = pSrc->a;
+                        ++pSrc;
+                        ++pDst;
+                    }
+                }
+            }
+            
+            return true;
+        }
+    }
+    return false;
 }
 
-- (bool) showImagePicker:(const char *)sourceTypeText
+- (bool) showImagePicker:(const char *)sourceTypeText orientation:(int)orientation
 {
-	[self hide];
+    [self hide];
     
-	[self releaseImage];
-	
+    [self releaseImage];
+    
     [self releasePicker];
     
-	sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
-	
+    sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+    NSArray *mediaTypes = [NSArray arrayWithObject:(NSString *)kUTTypeImage];
+    
     if (strcmp(sourceTypeText, strSourceType_PhotoLibrary) == 0)
     {
-		sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
-	}
+        pickerType = 0;
+        
+        sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+    }
+    else if (strcmp(sourceTypeText, strSourceType_MovieLibrary) == 0)
+    {
+        pickerType = 1;
+        sourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
+        mediaTypes = [NSArray arrayWithObject:(NSString *)kUTTypeMovie];
+    }
     else if (strcmp(sourceTypeText, strSourceType_Camera) == 0)
     {
-		sourceType = UIImagePickerControllerSourceTypeCamera;
-	}
+        pickerType = 2;
+        
+        sourceType = UIImagePickerControllerSourceTypeCamera;
+    }
     else if (strcmp(sourceTypeText, strSourceType_SavedPhotosAlbum) == 0)
     {
-		sourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
-	}
+        sourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
+    }
     
-	if ([UIImagePickerController isSourceTypeAvailable:sourceType] == false)
+    if ([UIImagePickerController isSourceTypeAvailable:sourceType] == false)
     {
-		ImagePicker_callback(strCallbackResultMessage_SourceTypeUnavailable);
-	
+        ImagePicker_callback(strCallbackResultMessage_SourceTypeUnavailable);
+        
         return false;
-	}
+    }
     
-	imagePicker = [[UIImagePickerController alloc] init];
-	imagePicker.sourceType = sourceType;
-	imagePicker.videoQuality = UIImagePickerControllerQualityType640x480;
-	imagePicker.allowsEditing = NO;
-	imagePicker.delegate = self;
+    imagePicker = [[FASImagePickerController alloc] init];
+    imagePicker.sourceType = sourceType;
+    imagePicker.mediaTypes = mediaTypes;
+    imagePicker.videoQuality = UIImagePickerControllerQualityType640x480;
+    imagePicker.allowsEditing = NO;
+    imagePicker.delegate = self;
     
-	[UnityGetGLViewController() presentViewController:imagePicker animated:YES completion:^ {}];
+    [UnityGetGLViewController() presentViewController:imagePicker animated:YES completion:^ {}];
     
-	return true;
+    return true;
 }
 
 - (void) hide
 {
-	[UnityGetGLViewController() dismissViewControllerAnimated:YES completion:^ {}];
+    [UnityGetGLViewController() dismissViewControllerAnimated:YES completion:^ {}];
+}
+
+- (void) handleThumbnailFinished:(NSNotification*)notification
+{
+    NSDictionary *userInfo = [notification userInfo];
+    loadedImage = [userInfo valueForKey:MPMoviePlayerThumbnailImageKey];
+    if (loadedImage)
+        [loadedImage retain];
+    moviePlayer = nil;
+    
+    ImagePicker_callback(strCallbackResultMessage_Loaded);
+    
+    [self hide];
+    
+    ImagePicker_callback(strCallbackResultMessage_Hidden);
 }
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
-	[self releaseImage];
-	loadedImage = [info objectForKey:UIImagePickerControllerEditedImage];
-	if (loadedImage == nil) {
-		loadedImage = [info objectForKey:UIImagePickerControllerOriginalImage];
-	}
-	if (loadedImage) {
-		[loadedImage retain];
-	}
-	ImagePicker_callback(strCallbackResultMessage_Loaded);
-	
-	[self hide];
+    [self releaseImage];
     
-	ImagePicker_callback(strCallbackResultMessage_Hidden);
-	
+    if(pickerType == 1) { // movie
+        
+        NSURL *url = [info objectForKey:UIImagePickerControllerReferenceURL];
+        
+        if (url)
+        {
+            NSURL *videoUrl = [info objectForKey:UIImagePickerControllerMediaURL];
+            
+            NSString *videoPath = [videoUrl path];
+            
+            strncpy(latestVideoUrl, videoPath.UTF8String, sizeof(latestVideoUrl));
+            
+            moviePlayer = [[MPMoviePlayerViewController alloc] initWithContentURL:url];
+            [[moviePlayer moviePlayer] requestThumbnailImagesAtTimes:[NSArray arrayWithObject:[NSNumber numberWithFloat:0.0f]] timeOption:MPMovieTimeOptionNearestKeyFrame];
+        }
+    }
+    else
+    {
+        loadedImage = [info objectForKey:UIImagePickerControllerEditedImage];
+        if (loadedImage == nil) {
+            loadedImage = [info objectForKey:UIImagePickerControllerOriginalImage];
+        }
+        if (loadedImage) {
+            [loadedImage retain];
+        }
+        
+        ImagePicker_callback(strCallbackResultMessage_Loaded);
+        
+        [self hide];
+        
+        ImagePicker_callback(strCallbackResultMessage_Hidden);
+    }
 }
 
 - (void) imagePickerControllerDidCancel:(UIImagePickerController*)picker
 {
-	[self hide];
+    [self hide];
     
     ImagePicker_callback(strCallbackResultMessage_Canceled);
 }
@@ -194,43 +262,45 @@ static ImagePickerPlugin *pInstance = nil;
 @end
 
 // Interface
-extern "C" bool ImagePicker_showPicker(const char *sourceType, const char *callbackGameObjectName, const char *callbackMethodName) {
+extern "C" bool ImagePicker_showPicker(const char *sourceType, int orientation, const char *callbackGameObjectName, const char *callbackMethodName) {
     
-	strncpy(callbackLoadedInfo.strGameObjectName, callbackGameObjectName, sizeof(callbackLoadedInfo.strGameObjectName));
+    //showOrientation = orientation;
     
-	strncpy(callbackLoadedInfo.strMethodName, callbackMethodName, sizeof(callbackLoadedInfo.strMethodName));
-	    
-    return [[ImagePickerPlugin instance] showImagePicker:sourceType];
+    strncpy(callbackLoadedInfo.strGameObjectName, callbackGameObjectName, sizeof(callbackLoadedInfo.strGameObjectName));
+    
+    strncpy(callbackLoadedInfo.strMethodName, callbackMethodName, sizeof(callbackLoadedInfo.strMethodName));
+    
+    return [[ImagePickerPlugin instance] showImagePicker:sourceType orientation:orientation];
 }
 
 extern "C" bool ImagePicker_isLoaded() {
-	return (loadedImage);
+    return (loadedImage);
 }
 
 extern "C" int ImagePicker_getLoadedTexrureWidth() {
-	if (ImagePicker_isLoaded()) {
-		return (int)[loadedImage size].width;
-	}
-	return 0;
+    if (ImagePicker_isLoaded()) {
+        return (int)[loadedImage size].width;
+    }
+    return 0;
 }
 
 extern "C" int ImagePicker_getLoadedTexrureHeight() {
-	if (ImagePicker_isLoaded()) {
-		return (int)[loadedImage size].height;
-	}
-	return 0;
+    if (ImagePicker_isLoaded()) {
+        return (int)[loadedImage size].height;
+    }
+    return 0;
 }
 
 extern "C" bool ImagePicker_getLoadedTexrure(Color32 *pixelBuffer, int width, int height) {
-	return [[ImagePickerPlugin instance] getLoadedTexrure:pixelBuffer width:width height:height];
+    return [[ImagePickerPlugin instance] getLoadedTexrure:pixelBuffer width:width height:height];
 }
 
 extern "C" void ImagePicker_release() {
-	[[ImagePickerPlugin instance] release];
+    [[ImagePickerPlugin instance] release];
 }
 
 extern "C" void ImagePicker_releaseLoadedImage() {
-	[[ImagePickerPlugin instance] releaseImage];
+    [[ImagePickerPlugin instance] releaseImage];
 }
 
 extern "C" void ImagePicker_savePngDataToPhotoLibrary(const char** ptrImageData, const int imageDataLength){
@@ -241,15 +311,24 @@ extern "C" void ImagePicker_savePngDataToPhotoLibrary(const char** ptrImageData,
     
 }
 
+extern "C" char *ImagePicker_getVideoUrl(){
+    
+    assert(latestVideoUrl);
+    char *copyStr = (char *)malloc(strlen(latestVideoUrl)+1);
+    assert(copyStr);
+    strcpy(copyStr, latestVideoUrl);
+    return copyStr;
+}
+
 static char *fasStrCopy(const char *str) {
-	assert(str);
-	char *copyStr = (char *)malloc(strlen(str)+1);
-	assert(copyStr);
-	strcpy(copyStr, str);
-	return copyStr;
+    assert(str);
+    char *copyStr = (char *)malloc(strlen(str)+1);
+    assert(copyStr);
+    strcpy(copyStr, str);
+    return copyStr;
 }
 
 static void ImagePicker_callback(const char *msg) {
-	UnitySendMessage(fasStrCopy(callbackLoadedInfo.strGameObjectName), fasStrCopy(callbackLoadedInfo.strMethodName), fasStrCopy(msg));
+    UnitySendMessage(fasStrCopy(callbackLoadedInfo.strGameObjectName), fasStrCopy(callbackLoadedInfo.strMethodName), fasStrCopy(msg));
 }
 

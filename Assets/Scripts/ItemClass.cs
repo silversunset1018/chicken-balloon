@@ -52,7 +52,7 @@ public class ItemClass : MonoBehaviour {
 			//風船（課金アイテム）.
 			} else {
 				player.GetAnimator().SetInteger("ItemID", 6);
-				Soomla.Store.StoreInventory.GiveItem("currency_balloon", 1);
+				GameController.shopBalloon ++;
 				GameController.SetBalloonText();
 			}
 

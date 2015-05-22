@@ -4,7 +4,7 @@ static int stdoutSave;
 
 static int stderrSave;
 
-void LogStart_(const char* path){
+void _LogStart(const char* path){
 
     // Save stderr so it can be restored.
     stderrSave = dup(fileno(stderr));
@@ -18,7 +18,7 @@ void LogStart_(const char* path){
     
 }
 
-void LogSave_(){
+void _LogSave(){
     
     // Flush before restoring stderr
     fflush(stderr);

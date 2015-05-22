@@ -1,5 +1,31 @@
 fileFormatVersion: 2
 guid: f3719703e7fda47a6b5e30c431476b4a
+labels:
+- soomla
+- store
+- storekit
+- native
+- unibill
+- prime31
+- codiwans
+- simpleiap
+- iap
+- inappbilling
+- billing
+- iap
+- inapppurchase
+- coins
+- fraud
+- receipt
+- verification
+- monetization
+- OpenIAB
+- playmaker
+- photon
+- builder
+- inapppurchasebuilder
+- stan
+- stansassets
 TrueTypeFontImporter:
   serializedVersion: 2
   fontSize: 16

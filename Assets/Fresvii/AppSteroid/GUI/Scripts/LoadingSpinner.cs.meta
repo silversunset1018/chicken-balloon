@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: c0c73490790c2d4448d2214d0628bae1
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - textureSpinner: {fileID: 2800000, guid: 6df01ab926bc6cb4eb6878fcb607cc1a, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 

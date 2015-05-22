@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="INPUT_YOUR_BUNDLE_IDENTIFIER" android:installLocation="preferExternal" android:versionCode="1" android:versionName="1.0">
+
+  <supports-screens android:smallScreens="true"
+          android:normalScreens="true"
+          android:largeScreens="true"
+          android:xlargeScreens="true"
+          android:anyDensity="true" />
+
+  <permission android:name="INPUT_YOUR_BUNDLE_IDENTIFIER.permission.C2D_MESSAGE"
+            android:protectionLevel="signature" />
+  <uses-permission android:name="INPUT_YOUR_BUNDLE_IDENTIFIER.permission.C2D_MESSAGE" />
+  <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+  <uses-permission android:name="android.permission.WAKE_LOCK" />
+  <uses-permission android:name="android.permission.INTERNET" />
+  <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+  <uses-permission android:name="android.permission.VIBRATE"/>
+  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+  <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+  <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+  <application
+          android:icon="@drawable/app_icon"
+          android:label="@string/app_name"
+          android:debuggable="false"
+          android:allowBackup="true"
+          android:backupAgent="com.fresvii.sdk.unity.TheBackupAgent">
+
+    <receiver android:name="com.fresvii.sdk.unity.GCMReceiver"
+           android:permission="com.google.android.c2dm.permission.SEND" >
+
+      <intent-filter>
+        <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+        <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+        <category android:name="INPUT_YOUR_BUNDLE_IDENTIFIER" />
+      </intent-filter>
+
+    </receiver>
+
+    <service android:name="com.fresvii.sdk.unity.GCMIntentService" />
+
+    <meta-data android:name="com.google.android.backup.api_key"
+        android:value="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX_XXXXXXXXXXXXXXXXX" />
+
+    <activity android:name="com.unity3d.player.UnityPlayerNativeActivity"
+             android:label="@string/app_name"
+                android:launchMode="singleTask"
+                android:configChanges="fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen">
+
+      <meta-data android:name="android.app.lib_name" android:value="unity" />
+
+      <meta-data android:name="unityplayer.ForwardNativeEventsToDalvik" android:value="false" />
+
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+      </intent-filter>
+
+      <intent-filter>
+        <action android:name="INPUT_YOUR_BUNDLE_IDENTIFIER.NotificationAction"/>
+        <category android:name="android.intent.category.DEFAULT"/>
+      </intent-filter>
+
+    </activity>
+
+    <activity android:name="com.unity3d.player.VideoPlayer"
+        android:label="@string/app_name"
+        android:configChanges="fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen">
+    </activity>
+
+    <activity android:name="com.fresvii.sdk.unity.ImagePickerActivity"/>
+
+    <activity android:name="com.fresvii.sdk.unity.VideoPlayerActivity" android:configChanges="orientation|screenSize"/>
+
+  </application>
+
+  <uses-feature android:glEsVersion="0x00020000" />
+
+  <uses-sdk android:minSdkVersion="10" android:targetSdkVersion="14" />
+
+</manifest>

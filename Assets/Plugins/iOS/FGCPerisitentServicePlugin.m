@@ -13,7 +13,7 @@ char* FasMakeStringCopy (const char* string)
 	return res;
 }
 
-void AddUserIdentifier_(const char* userIdentifier, const char *userToken ){
+void _AddUserIdentifier(const char* userIdentifier, const char *userToken ){
     
     NSError *error;
     
@@ -22,7 +22,7 @@ void AddUserIdentifier_(const char* userIdentifier, const char *userToken ){
                                                       error:&error];
 }
 
-void DeleteUserCertificationWithUserIdentifier_(const char* userIdentifier){
+void _DeleteUserCertificationWithUserIdentifier(const char* userIdentifier){
     
     NSError *error;
     
@@ -30,7 +30,7 @@ void DeleteUserCertificationWithUserIdentifier_(const char* userIdentifier){
                                                                              error:&error];
 }
 
-char *UserCertifications_(){
+char *_UserCertifications(){
     
     NSArray *userCertifications = [[FGCPersistentService sharedService] userCertifications];
     

@@ -59,7 +59,7 @@ static SensorPlugin *pInstance = nil;
 
 @end
 
-extern "C" void RegisterListnerProximitySensor_(const char *callbackGameObjectName, const char *callbackMethodName)
+extern "C" void _RegisterListnerProximitySensor(const char *callbackGameObjectName, const char *callbackMethodName)
 {
     strncpy(strGameObjectName, callbackGameObjectName, sizeof(strGameObjectName));
     
@@ -68,7 +68,7 @@ extern "C" void RegisterListnerProximitySensor_(const char *callbackGameObjectNa
     [[SensorPlugin instance] registerListnerProximitySensor];
 }
 
-extern "C" void UnregisterListnerProximitySensor_() {
+extern "C" void _UnregisterListnerProximitySensor() {
     
     [[SensorPlugin instance] unregisterListnerProximitySensor];
 }

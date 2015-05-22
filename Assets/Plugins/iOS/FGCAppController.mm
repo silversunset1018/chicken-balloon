@@ -5,7 +5,7 @@
 @interface FGCAppController : UnityAppController
 @end
 
-char* MakeStringCopy (const char* string) {
+char* FgcMakeStringCopy (const char* string) {
     if (string == NULL) return NULL;
     char* res = (char*)malloc(strlen(string) + 1);
     strcpy(res, string);
@@ -16,25 +16,42 @@ char* MakeStringCopy (const char* string) {
 
 const char* pushedIdData;
 
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+{
+    [super application:application didFinishLaunchingWithOptions:launchOptions];
+    
+    NSDictionary *userInfo = [launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
+    
+    if (userInfo != nil) {
+        
+        NSDictionary *id = [userInfo objectForKey:@"id"];
+        
+        if(id != NULL)
+            pushedIdData = FgcMakeStringCopy([[id description]UTF8String]);
+        
+    }
+    
+    return YES;
+}
+
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo
 {
     AppController_SendNotificationWithArg(kUnityDidReceiveRemoteNotification, userInfo);
-	UnitySendRemoteNotification(userInfo);
+    UnitySendRemoteNotification(userInfo);
     
     if (application.applicationState == UIApplicationStateActive)
     {
-        // アプリが起動している時に、push通知が届きpush通知から起動
+
     }
     
     if (application.applicationState == UIApplicationStateInactive)
     {
-        // アプリがバックグラウンドで起動している時に、push通知が届きpush通知から起動
         if (userInfo != nil) {
             
             NSDictionary *id = [userInfo objectForKey:@"id"];
             
             if(id != NULL)
-                pushedIdData = MakeStringCopy([[id description]UTF8String]);            
+                pushedIdData = FgcMakeStringCopy([[id description]UTF8String]);
         }
     }
 }
@@ -42,7 +59,7 @@ const char* pushedIdData;
 @end
 
 
-extern "C" const char* GetPushedNotificationId_()
+extern "C" const char* _GetPushedNotificationId()
 {
     if(pushedIdData != NULL)
         return pushedIdData;
@@ -50,7 +67,7 @@ extern "C" const char* GetPushedNotificationId_()
         return NULL;
 }
 
-extern "C" const void ClearPushedNotificationId_()
+extern "C" const void _ClearPushedNotificationId()
 {
     pushedIdData = NULL;
 }

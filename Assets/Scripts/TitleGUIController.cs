@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -9,7 +9,7 @@ using Fresvii.AppSteroid;
  * タイトル画面GUI管理クラス / GUI management class in title screen
  * 
  * 画面入力を制御する.
- * control screen input.
+ * control screen input. 
  * 
 */
 public class TitleGUIController : MonoBehaviour {
@@ -52,6 +52,7 @@ public class TitleGUIController : MonoBehaviour {
 	
 	public GUISkin mySkin;
 	public GameObject quitParent;
+	public GameObject noConnectrionParent;
 
 	private const string SOUND_SAVE_KEY = "IsSoundOn";
 	private bool isCanInput = true;
@@ -79,13 +80,13 @@ public class TitleGUIController : MonoBehaviour {
 		#endif
 	
 		//端末の回転を制御（Fresvii SDKに入る時に許可した縦持ちを禁止する）（iOS8でない時のみ）.
-		if (!GameController.isIOS8) {
+		//if (!GameController.isIOS8) {
 			if (Screen.orientation == ScreenOrientation.Portrait || Screen.orientation == ScreenOrientation.PortraitUpsideDown) {
 				Screen.orientation = ScreenOrientation.LandscapeLeft;
 			}
 			Screen.autorotateToPortrait = false;
 			Screen.autorotateToPortraitUpsideDown = false;
-		}
+		//}
 
 		//ゲームオーバー時のサウンドがまだ残っていたら消す.
 		GameObject goBGM = GameObject.Find("GameOverBGM");
@@ -113,11 +114,11 @@ public class TitleGUIController : MonoBehaviour {
 	//------------------------------
 	void Update () {
 		//端末の画面回転を許可する.
-		if (!GameController.isIOS8) {
+		//if (!GameController.isIOS8) {
 			if (Screen.orientation == ScreenOrientation.LandscapeLeft) {
 				Screen.orientation = ScreenOrientation.AutoRotation;
 			}
-		}
+		//}
 
 		CheckInput();
 
@@ -218,10 +219,10 @@ public class TitleGUIController : MonoBehaviour {
 				btnForum.sprite = btnForumSprites[1];
 				soundButton.Play();
 				
-				//ネットワークが繋がっていなかったら何もしない.
+				//ネットワークが繋がっていたらフォーラムへ、いなかったらGUI表示.
 				if (Application.internetReachability != NetworkReachability.NotReachable){
 					if (fresviiComp.GetAlreadySignup()) {
-						isCanInput = false;
+						//isCanInput = false;
 						//#FGC Forum Start――――――
 						fresviiComp.ShowFGCGui("");
 						//#FGC Forum End――――――
@@ -232,6 +233,9 @@ public class TitleGUIController : MonoBehaviour {
 						signUpParent.SetActive(true);
 						isShowOnGUI = true;
 					}
+				} else {
+					noConnectrionParent.SetActive(true);
+					StartCoroutine("HideNoConnection");
 				}
 			}
 
@@ -350,5 +354,13 @@ public class TitleGUIController : MonoBehaviour {
 		GameController.SetBalloonText();	//風船の数セット.
 		isCoroutine = false;
 		btnShop.sprite = btnShopSprites[0];
+	}
+
+	//------------------------------
+	//No Connection画像表示をオン・オフ.
+	//------------------------------
+	private IEnumerator HideNoConnection() {
+		yield return new WaitForSeconds (2.5f);
+		noConnectrionParent.SetActive (false);
 	}
 }

@@ -20,8 +20,7 @@ public class CurrentBalloonController : MonoBehaviour {
 	//------------------------------
 	public void SetBalloonText() {
 		//0で埋める / fill in 0
-		Soomla.Example.ExampleLocalStoreInfo.UpdateBalances();
-		int cur = Soomla.Example.ExampleLocalStoreInfo.CurrencyBalance;
+		int cur = GameController.shopBalloon;
 		string scoreStr = cur.ToString().PadLeft(digits.Length, '0');
 		
 		//数字画像を適用させる / adapt the number image

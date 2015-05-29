@@ -13,10 +13,6 @@ namespace Fresvii.AppSteroid.Gui
 		#if UNITY_IOS
 		[DllImport ("__Internal")]    
 		private static extern string _FasGetVideoThumbnailImagePath(string videoFilePath);
-
-		[DllImport ("__Internal")]    
-		private static extern void _FasSendMail(string title, string message, string to, string callbackObjectName);
-
 		#endif
 
         private static FresviiGUIVideoSharing instance;
@@ -625,7 +621,7 @@ namespace Fresvii.AppSteroid.Gui
 
                 progressBar.fillAmount = 0f;
 
-				Fresvii.AppSteroid.Util.DialogManager.Instance.ShowProgressSpinnerDialog("", "Uploading ...", false);
+				Fresvii.AppSteroid.Util.DialogManager.ShowProgressSpinnerDialog("", "Uploading ...", false);
 
 				toneDownUpper.SetActive(true);
 
@@ -742,28 +738,22 @@ namespace Fresvii.AppSteroid.Gui
 
 			toneDownBottom.SetActive(true);
 
-			Fresvii.AppSteroid.Util.DialogManager.Instance.HideProgressSpinnerDialog();
+			Fresvii.AppSteroid.Util.DialogManager.HideProgressSpinnerDialog();
 
 			// Email
 			if (shareServiceButtons[3].IsOn)
 			{
-				TextAsset textAsset = Resources.Load("Texts/SharingVideoByEmailHTMLTemplete") as TextAsset;
-
-                string body = textAsset.text;
-
-                body = body.Replace("_comment_", commentInputField.text);
-
-                body = body.Replace("_video_url_", video.VideoUrl);
-
 				#if UNITY_EDITOR
 				
 				#elif UNITY_IOS 
-				_FasSendMail(FresviiGUIText.Get("VideoSharingEmailSubjectPrefix") + FASSettings.Instance.appName, body, "", this.gameObject.name);
-				#elif UNITY_ANDROID 
+			    string body = commentInputField.text + "\n\n" + video.VideoUrl;
 
-				#endif
-								                
-				shareProcessing = true;
+                Fresvii.AppSteroid.Util.Email.Send(FresviiGUIText.Get("VideoSharingEmailSubjectPrefix") + FASSettings.Instance.appName, body, "", this.gameObject.name);
+#elif UNITY_ANDROID 
+
+#endif
+
+                shareProcessing = true;
             }
 
 

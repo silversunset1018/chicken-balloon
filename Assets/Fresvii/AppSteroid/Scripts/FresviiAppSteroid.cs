@@ -10,9 +10,11 @@ namespace Fresvii.AppSteroid
     public class FresviiAppSteroid : MonoBehaviour
     {
         // Use this for initialization
-        void Start()
+        void Awake()
         {
             FASConfig.Instance = FASSettings.Settings;
+
+            FASConfig.Instance.systemLanguage = Application.systemLanguage;
 
 #if UNITY_5
             FASConfig.Instance.unityVersion = 5.0f;

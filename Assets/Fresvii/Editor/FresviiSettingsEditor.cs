@@ -118,7 +118,7 @@ namespace Fresvii.AppSteroid.Gui
 
             #region Util
 
-            instance.officialChat = EditorGUILayout.Toggle("Official Chat", instance.officialChat);
+            instance.officialChat = EditorGUILayout.Toggle("CSR", instance.officialChat);
 
             instance.logLevel = (FAS.LogLevels) EditorGUILayout.EnumPopup("Log level", instance.logLevel);
 
@@ -146,8 +146,6 @@ namespace Fresvii.AppSteroid.Gui
 
 			if (showIOSSettings)
 			{
-				instance.apnsEnvironment = (FAS.ProvisioningEnvironment)EditorGUILayout.EnumPopup("APNS Certificate", instance.apnsEnvironment);
-
                 instance.videoEnable = EditorGUILayout.Toggle(videoFeatureEnableLabel, instance.videoEnable);
 			}
 

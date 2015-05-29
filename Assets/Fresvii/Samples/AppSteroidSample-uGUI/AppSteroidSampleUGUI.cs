@@ -129,11 +129,11 @@ public class AppSteroidSampleUGUI : MonoBehaviour {
 #endif
                 textLog.text += "Sign up start\n";
 
-                Fresvii.AppSteroid.Util.DialogManager.Instance.ShowProgressSpinnerDialog("Sign up", "Processing...", false);
+                Fresvii.AppSteroid.Util.DialogManager.ShowProgressSpinnerDialog("Sign up", "Processing...", false);
 
                 FASUser.SignUp(username, (user, error) =>
                 {
-                    Fresvii.AppSteroid.Util.DialogManager.Instance.HideProgressSpinnerDialog();
+                    Fresvii.AppSteroid.Util.DialogManager.HideProgressSpinnerDialog();
 
                     if (error != null)
                     {
@@ -156,11 +156,11 @@ public class AppSteroidSampleUGUI : MonoBehaviour {
     {
         textLog.text += "Start : Log in\n";
 
-        Fresvii.AppSteroid.Util.DialogManager.Instance.ShowProgressSpinnerDialog("Log in", "Processing...", false);
+        Fresvii.AppSteroid.Util.DialogManager.ShowProgressSpinnerDialog("Log in", "Processing...", false);
 
         FASUser.LogIn((error) =>
         {
-            Fresvii.AppSteroid.Util.DialogManager.Instance.HideProgressSpinnerDialog();
+            Fresvii.AppSteroid.Util.DialogManager.HideProgressSpinnerDialog();
 
             if (error != null)
             {

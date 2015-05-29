@@ -15,6 +15,21 @@ public class FresviiAppSteroidUnitySetting
 
     static FresviiAppSteroidUnitySetting()
     {
+#if UNITY_5
+        Fresvii.AppSteroid.FAS.BuildUnityVersion buildUnityVersion = Fresvii.AppSteroid.FAS.BuildUnityVersion.UNITY_5;
+#else
+        Fresvii.AppSteroid.FAS.BuildUnityVersion buildUnityVersion = Fresvii.AppSteroid.FAS.BuildUnityVersion.UNITY_4;
+#endif
+        if (Fresvii.AppSteroid.FAS.BuildFor() != buildUnityVersion)
+        {
+#if UNITY_5
+            EditorUtility.DisplayDialog("AppSteroid Unity Version Error", "Installed AppSteroid package is for Unity 4.6 and unable to use Unity 5. Please install a suitable package.", "OK");
+#else
+            EditorUtility.DisplayDialog("AppSteroid Unity Version Error", "Installed AppSteroid package is for Unity 5 and unable to use this Unity. Please install a suitable package.", "OK");
+#endif
+        }
+
+
         // Set GUI Scenes
         var original = EditorBuildSettings.scenes;
 

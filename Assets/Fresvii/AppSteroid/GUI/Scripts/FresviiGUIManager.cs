@@ -267,7 +267,7 @@ namespace Fresvii.AppSteroid.Gui
                             }
                             else
                             {
-								Fresvii.AppSteroid.Util.DialogManager.Instance.HideProgressSpinnerDialog();
+								Fresvii.AppSteroid.Util.DialogManager.HideProgressSpinnerDialog();
 
                                 LoginUserId = "";
 
@@ -277,7 +277,7 @@ namespace Fresvii.AppSteroid.Gui
                             }
                         });					
 #else
-						Fresvii.AppSteroid.Util.DialogManager.Instance.HideProgressSpinnerDialog();
+						Fresvii.AppSteroid.Util.DialogManager.HideProgressSpinnerDialog();
 
 						LoginUserId = "";
 						
@@ -318,7 +318,7 @@ namespace Fresvii.AppSteroid.Gui
                             }
                             else
                             {
-								Fresvii.AppSteroid.Util.DialogManager.Instance.HideProgressSpinnerDialog();
+								Fresvii.AppSteroid.Util.DialogManager.HideProgressSpinnerDialog();
 
                                 LoginUserId = "";
 
@@ -328,7 +328,7 @@ namespace Fresvii.AppSteroid.Gui
                             }
                         });					
 #else
-                        Fresvii.AppSteroid.Util.DialogManager.Instance.HideProgressSpinnerDialog();
+                        Fresvii.AppSteroid.Util.DialogManager.HideProgressSpinnerDialog();
 
                         LoginUserId = "";
 
@@ -359,7 +359,7 @@ namespace Fresvii.AppSteroid.Gui
                                     }
                                     else
                                     {
-								        Fresvii.AppSteroid.Util.DialogManager.Instance.HideProgressSpinnerDialog();
+								        Fresvii.AppSteroid.Util.DialogManager.HideProgressSpinnerDialog();
 
                                         LoginUserId = "";
 
@@ -369,7 +369,7 @@ namespace Fresvii.AppSteroid.Gui
                                     }
                                 });					
 #else
-                                Fresvii.AppSteroid.Util.DialogManager.Instance.HideProgressSpinnerDialog();
+                                Fresvii.AppSteroid.Util.DialogManager.HideProgressSpinnerDialog();
 
                                 LoginUserId = "";
 
@@ -413,7 +413,7 @@ namespace Fresvii.AppSteroid.Gui
                             }
                             else
                             {
-								Fresvii.AppSteroid.Util.DialogManager.Instance.HideProgressSpinnerDialog();
+								Fresvii.AppSteroid.Util.DialogManager.HideProgressSpinnerDialog();
 
                                 LoginUserId = "";
 
@@ -423,7 +423,7 @@ namespace Fresvii.AppSteroid.Gui
                             }
                         });					
 #else
-                        Fresvii.AppSteroid.Util.DialogManager.Instance.HideProgressSpinnerDialog();
+                        Fresvii.AppSteroid.Util.DialogManager.HideProgressSpinnerDialog();
 
                         LoginUserId = "";
 
@@ -605,7 +605,7 @@ namespace Fresvii.AppSteroid.Gui
 
             yield return 1;
 
-            Fresvii.AppSteroid.Util.DialogManager.Instance.HideProgressSpinnerDialog();
+            Fresvii.AppSteroid.Util.DialogManager.HideProgressSpinnerDialog();
 
 			initialized = true;
         }
@@ -711,7 +711,7 @@ namespace Fresvii.AppSteroid.Gui
 
             Fresvii.AppSteroid.Util.DeviceRotationControll.Set(initDeviceRotationSetting);
 
-			Fresvii.AppSteroid.Util.DialogManager.Instance.HideProgressSpinnerDialog();
+  			Fresvii.AppSteroid.Util.DialogManager.HideProgressSpinnerDialog();
         }
 
         public void SetViewMode(FASGui.Mode viewMode)
@@ -798,6 +798,8 @@ namespace Fresvii.AppSteroid.Gui
       
         void Awake()
         {
+            FASConfig.Instance.systemLanguage = Application.systemLanguage;
+
             Instance = this;
 
             GuiMode = FASGui.mode;

@@ -465,12 +465,12 @@ namespace Fresvii.AppSteroid.Gui
 
         float CalcScrollViewHeight()
         {
-            /*if (user.Official)
+            if (user.Official)
             {
                 return friendButtonPosition.y + tabBar.height;
             }
             else
-            {*/
+            {
 #if UNITY_IOS
 
                 if (FASConfig.Instance.videoEnable)
@@ -484,7 +484,7 @@ namespace Fresvii.AppSteroid.Gui
 #else
                 return friendMenuTitleBarPosition.y + friendMenuTitleBarPosition.height + tabBar.height;
 #endif
-            //}
+            }
         }
 
 		void Update(){
@@ -834,14 +834,14 @@ namespace Fresvii.AppSteroid.Gui
                     GUI.Label(userDescriptionPosition, userDescriptionContent, guiStyleLabelUserProfile);
                 }
 
-                /*if (user.Official)
+                if (user.Official)
                 {
                     GUI.EndGroup();
 
                     GUI.EndGroup();
 
                     return;
-                }*/
+                }
 
                 Event e = Event.current;
 
@@ -1170,10 +1170,7 @@ namespace Fresvii.AppSteroid.Gui
                 GUI.EndGroup();
 
                 GUI.EndGroup();
-
             }
-
-        }
-       
+        }       
     }
 }

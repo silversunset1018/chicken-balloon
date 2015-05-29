@@ -65,6 +65,8 @@ namespace Fresvii.AppSteroid.Gui
 
         public Texture2D textureTagYou;
 
+        public static bool IsShowing = false;
+
         public override void Init(Texture2D appIcon, string postFix, float scaleFactor, int guiDepth)
         {
             SelectedUsers = new List<Fresvii.AppSteroid.Models.User>();
@@ -160,13 +162,15 @@ namespace Fresvii.AppSteroid.Gui
 			FASEvent.OnMatchMakingGameContextCreated += OnMatchMakingGameContextCreated;
 
 			FASMatchMaking.latestGameContext = null;
+
+            IsShowing = true;
         }
 
         void OnDisable()
         {
             FASEvent.OnMatchMakingMatchUpdated -= OnMatchMakingMatchUpdated;
 		
-			FASEvent.OnMatchMakingGameContextCreated -= OnMatchMakingGameContextCreated;        
+			FASEvent.OnMatchMakingGameContextCreated -= OnMatchMakingGameContextCreated;
         }
 
 		void OnMatchMakingGameContextCreated(Fresvii.AppSteroid.Models.GameContext gameContext)
@@ -435,9 +439,16 @@ namespace Fresvii.AppSteroid.Gui
 
                     if (e != null)
                     {
-                        Fresvii.AppSteroid.Util.DialogManager.Instance.SetLabel(FresviiGUIText.Get("OK"), FresviiGUIText.Get("Cancel"), FresviiGUIText.Get("Close"));
+                        if (e.Code == (int)Fresvii.AppSteroid.Models.Error.ErrorCode.CannotCancelMatch)
+                        {
+                            FresviiGUIManager.Instance.LoadScene();
+                        }
+                        else
+                        {
+                            Fresvii.AppSteroid.Util.DialogManager.Instance.SetLabel(FresviiGUIText.Get("OK"), FresviiGUIText.Get("Cancel"), FresviiGUIText.Get("Close"));
 
-                        Fresvii.AppSteroid.Util.DialogManager.Instance.ShowSubmitDialog(FresviiGUIText.Get("UnknownError"), (del)=>{});
+                            Fresvii.AppSteroid.Util.DialogManager.Instance.ShowSubmitDialog(FresviiGUIText.Get("UnknownError"), (del) => { });
+                        }
 
                         Debug.LogError("DeclineMatchMakingInvitation : " + e.ToString());
 
@@ -466,13 +477,20 @@ namespace Fresvii.AppSteroid.Gui
 
                     if (e != null)
                     {
-                        Fresvii.AppSteroid.Util.DialogManager.Instance.SetLabel(FresviiGUIText.Get("OK"), FresviiGUIText.Get("Cancel"), FresviiGUIText.Get("Close"));
+                        if (e.Code == (int) Fresvii.AppSteroid.Models.Error.ErrorCode.CannotCancelMatch)
+                        {
+                            FresviiGUIManager.Instance.LoadScene();
+                        }
+                        else
+                        {
+                            Fresvii.AppSteroid.Util.DialogManager.Instance.SetLabel(FresviiGUIText.Get("OK"), FresviiGUIText.Get("Cancel"), FresviiGUIText.Get("Close"));
 
-                        Fresvii.AppSteroid.Util.DialogManager.Instance.ShowSubmitDialog(FresviiGUIText.Get("UnknownError"), (del) => { });
-
-                        Debug.LogError("CancelMatchMakingRequest : " + e.ToString());
+                            Fresvii.AppSteroid.Util.DialogManager.Instance.ShowSubmitDialog(FresviiGUIText.Get("UnknownError"), (del) => { });
+                        }
 
                         matchMakingTopMenu.SetRightButtonLabel(State);
+
+                        Debug.LogError("CancelMatchMakingRequest : " + e.ToString());
                     }
                     else
                     {
@@ -496,6 +514,8 @@ namespace Fresvii.AppSteroid.Gui
 
                 matchMakingRequest = null;
             }
+
+            IsShowing = false;
         }
 
         public override void SetDraw(bool on)

@@ -134,7 +134,7 @@ namespace Fresvii.AppSteroid.Gui
 			}
 			else if (Application.platform == RuntimePlatform.Android)
 			{
-				Fresvii.AppSteroid.Util.DialogManager.Instance.HideProgressSpinnerDialog();
+				Fresvii.AppSteroid.Util.DialogManager.HideProgressSpinnerDialog();
 			}
 		}
 

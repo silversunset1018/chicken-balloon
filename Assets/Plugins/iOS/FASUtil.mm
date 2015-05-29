@@ -4,13 +4,41 @@ extern "C"{
     
     int isDevelopment() {
         
-#ifdef DEBUG
-        return 1;
-#elif Debug
+#if TARGET_IPHONE_SIMULATOR
         return 1;
 #else
-        return 0;
+        static BOOL isDevelopment = NO;
+        
+        NSData *data = [NSData dataWithContentsOfFile:[NSBundle.mainBundle pathForResource:@"embedded" ofType:@"mobileprovision"]];
+        
+        if (data)
+        {
+            NSUInteger len = [data length];
+            
+            char *bytes = (char*)malloc(len);
+            
+            //const char *bytes = [data bytes];
+            
+            memcpy(bytes, [data bytes], len);
+            
+            NSMutableString *profile = [[NSMutableString alloc] initWithCapacity:data.length];
+            
+            for (NSUInteger i = 0; i < data.length; i++)
+            {
+                [profile appendFormat:@"%c", bytes[i]];
+            }
+            
+            // Look for debug value, if detected we're a development build.
+            NSString *cleared = [[profile componentsSeparatedByCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet] componentsJoinedByString:@""];
+            
+            isDevelopment = [cleared rangeOfString:@"<key>get-task-allow</key><true/>"].length > 0;
+            
+            free(bytes);
+        }
+        
+        return (isDevelopment) ? 1 : 0;
 #endif
+        
     }
     
     void attemptRotationToDeviceOrientation() {
@@ -88,13 +116,13 @@ extern "C"{
         fasAi = NULL;
         
     }
-
-	void _FasSaveVideoAtPathToSavedPhotosAlbum(const char *videoPath)
-	{
-		NSString *outputPath = [[NSString alloc] initWithUTF8String:videoPath];
-
-		UISaveVideoAtPathToSavedPhotosAlbum(outputPath, nil, nil, nil);
-	}
+    
+    void _FasSaveVideoAtPathToSavedPhotosAlbum(const char *videoPath)
+    {
+        NSString *outputPath = [[NSString alloc] initWithUTF8String:videoPath];
+        
+        UISaveVideoAtPathToSavedPhotosAlbum(outputPath, nil, nil, nil);
+    }
 }
 
 

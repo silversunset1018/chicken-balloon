@@ -60,7 +60,7 @@ namespace Fresvii.AppSteroid.Gui
 
         private Rect labelToUsersPosition;
         
-        private GUIContent contentLabelTo = new GUIContent(FresviiGUIText.Get("To"));
+        private GUIContent contentLabelTo = new GUIContent("");
 
         public float toMargin = 5f;
 
@@ -693,7 +693,6 @@ namespace Fresvii.AppSteroid.Gui
             GUI.EndGroup();
 
             GUI.EndGroup();
-
         }       
     }
 }

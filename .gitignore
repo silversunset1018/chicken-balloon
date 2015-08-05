@@ -1,4 +1,12 @@
 Library/
 iOSBuild/
 SignedAPK/
-.DS_Store
+*.csproj
+*.sln
+*.userprefs
+Temp/
+._iOSBuild
+APK/
+*.suo
+obj/
+Android/ChickenBalloon.apk

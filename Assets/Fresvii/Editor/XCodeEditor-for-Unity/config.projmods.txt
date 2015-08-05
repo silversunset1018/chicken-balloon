@@ -1,4 +1,0 @@
-{
-    "libs": ["libc++.dylib"],
-    "frameworks": ["Security.framework:"]
-}

@@ -3,8 +3,8 @@
 
 ### With Unity 4.6
 1. Download the sample project
-2. Download AppSteroid Unity SDK (Unity 4.6)
-3. Install the SDK
+2. Download AppSteroid Unity SDK (Unity 4.6)  
+**3. Install the SDK**
 4. Enter appropriate value to FAS Settings
 5. Enter Bundle ID on Build Settings
 6. Build

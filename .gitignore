@@ -10,3 +10,6 @@ APK/
 *.suo
 obj/
 Android/ChickenBalloon.apk
+Assets/Fresvii/
+Assets/Plugins/iOS/
+Assets/Plugins/Android/

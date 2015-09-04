@@ -6,7 +6,7 @@
 2. Download AppSteroid Unity SDK (Unity 4.6) --> [Download SDK](https://fresvii.com/downloads)
 3. Install the SDK
 4. Enter appropriate value to FAS Settings --> [FAS Settings](https://github.com/fresvii/appsteroid-sdk-unity-documents/blob/master/en/GetStarted.md)
-5. Enter Bundle ID on Build Settings --> [Bundle ID on Build Settings](https://github.com/fresvii/appsteroid-sdk-unity-documents/blob/master/en/GetStarted.md)
+5. Enter Bundle ID on Build Settings --> [Build Settings](https://github.com/fresvii/appsteroid-sdk-unity-documents/blob/master/en/GetStarted.md)
 6. Build
 
 ### With Unity 5.1
@@ -15,7 +15,7 @@
 3. Download AppSteroid Unity SDK (Unity 5.1) --> [Download SDK](https://fresvii.com/downloads)
 4. Install the SDK
 5. Enter appropriate value to FAS Settings --> [FAS Settings](https://github.com/fresvii/appsteroid-sdk-unity-documents/blob/master/en/GetStarted.md)
-6. Enter Bundle ID on Build Settings --> [Bundle ID on Build Settings](https://github.com/fresvii/appsteroid-sdk-unity-documents/blob/master/en/GetStarted.md)
+6. Enter Bundle ID on Build Settings --> [Build Settings](https://github.com/fresvii/appsteroid-sdk-unity-documents/blob/master/en/GetStarted.md)
 7. Build
 
 ####Important Note

@@ -14,8 +14,8 @@
 2. Convert the project from 4.6 to 5.1
 3. Download AppSteroid Unity SDK (Unity 5.1)
 4. Install the SDK
-5. Enter appropriate value to FAS Settings
-6. Enter Bundle ID on Build Settings
+5. Enter appropriate value to FAS Settings --> [Getting Started](https://github.com/fresvii/appsteroid-sdk-unity-documents/blob/master/en/GetStarted.md)
+6. Enter Bundle ID on Build Settings --> [Getting Started](https://github.com/fresvii/appsteroid-sdk-unity-documents/blob/master/en/GetStarted.md)
 7. Build
 
 ####Important Note

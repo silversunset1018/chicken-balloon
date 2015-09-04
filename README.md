@@ -1,10 +1,10 @@
-# Steps to Build Chicken Balloon: For Developers
+# How to Build Chicken Balloon
 
 
 ### With Unity4.6
 1. Download the project
 2. Download AppSteroid Unity SDK with Voice Chat (Unity 4.6)
-3. Overwrite install the SDK
+3. Complete overwrite installation of the SDK
 4. Enter appropriate value to FAS Settings
 5. Enter Bundle ID on Build Settings
 6. Build
@@ -17,3 +17,6 @@
 5. Enter appropriate value to FAS Settings
 6. Enter Bundle ID on Build Settings
 7. Build
+
+####Important Note
+* To download the SDK, you must sing up or login to Fresvii

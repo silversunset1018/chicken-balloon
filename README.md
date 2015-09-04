@@ -2,7 +2,7 @@
 
 
 ### With Unity 4.6
-1. Download the project
+1. Download the sample project
 2. Download AppSteroid Unity SDK (Unity 4.6)
 3. Install the SDK
 4. Enter appropriate value to FAS Settings
@@ -10,7 +10,7 @@
 6. Build
 
 ### With Unity 5.1
-1. Download the project
+1. Download the sample project
 2. Convert the project from 4.6 to 5.1
 3. Download AppSteroid Unity SDK (Unity 5.1)
 4. Install the SDK

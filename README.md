@@ -20,5 +20,5 @@
 
 ####Important Note
 * To download the SDK, you must sign up or login to Fresvii
-* For more info to get started, please check to [English](https://github.com/fresvii/appsteroid-sdk-unity-documents/blob/master/en/AppSteroidSDK.md) / [Japanese](https://github.com/fresvii/appsteroid-sdk-unity-documents/blob/master/ja/AppSteroidSDK.md) documents.
+* For more info to get started, please check to [English](https://github.com/fresvii/appsteroid-sdk-unity-documents/blob/master/en/AppSteroidSDK.md) / [Japanese](https://github.com/fresvii/appsteroid-sdk-unity-documents/blob/master/ja/AppSteroidSDK.md) documents
 * Problems? --> Please check [FAQ](https://github.com/fresvii/appsteroid-sdk-unity-documents/blob/master/en/FAQ.md)
